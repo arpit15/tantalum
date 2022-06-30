@@ -1,0 +1,47 @@
+#include "trace-frag"
+
+#include "bsdf"
+#include "intersect"
+
+void intersect(Ray ray, inout Intersection isect) {
+    // design params
+    float epoxy_th = 4.4;
+    float pdms_th = 1.69;
+    float pt2_y = 7.95;
+    float diffuse_surface_rad = 12.75 + pdms_th;
+    // ----
+    vec2 design_p1 = [ diffuse_surface_rad, 0 ];
+    vec2 design_p2 = [ diffuse_surface_rad, pt2_y ];
+    vec2 design_p3 = [ 2 , diffuse_surface_rad + pt2_y - 2 ]; // randomly chosen
+    vec2 design_p4 = [ 0, diffuse_surface_rad + pt2_y];
+    // outercurve = [design_p1[0], design_p1[1], design_p2[0], design_p2[1], design_p3[0], design_p3[1], design_p4[0], design_p4[1]]
+    
+    // ----
+    decr = epoxy_th + pdms_th;
+    vec2 edesign_p1 = vec2(design_p1[0] - decr, design_p1[1]);
+    vec2 edesign_p2 = vec2(design_p2[0] - decr, design_p2[1]);
+    vec2 edesign_p3 = vec2(design_p3[0] - decr/5, design_p3[1] - decr); // not correct always
+    vec2 edesign_p4 = vec2(design_p4[0], design_p4[1] - decr);
+
+    // innercurve = [edesign_p1[0], edesign_p1[1], edesign_p2[0], edesign_p2[1], edesign_p3[0], edesign_p3[1], edesign_p4[0], edesign_p4[1]]
+    // -----
+    float innermat = 2.0;
+    float outermat = 2.0;
+    // outer surface
+    bezierIntersect(ray, design_p1, design_p2, design_p3, design_p4, outermat, isect);
+    // inner surface
+    bezierIntersect(ray, edesign_p1, edesign_p2, edesign_p3, edesign_p4, innermat, isect);
+
+}
+
+vec2 sample(inout vec4 state, Intersection isect, float lambda, vec2 wiLocal, inout vec3 throughput) {
+    if (isect.mat == 1.0) {
+        float ior=1.5;
+        return sampleDielectric(state, wiLocal, ior);
+    } else if (isect.mat == 2.0) {
+        return sampleMirror(wiLocal);
+    } else {
+        throughput *= vec3(0.5);
+        return sampleDiffuse(state, wiLocal);
+    }
+}

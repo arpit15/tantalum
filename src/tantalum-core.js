@@ -119,6 +119,7 @@
     Renderer.SPREAD_BEAM  = 2;
     Renderer.SPREAD_LASER = 3;
     Renderer.SPREAD_AREA  = 4;
+    Renderer.SPREAD_AREA2  = 5;
     
     Renderer.prototype.resetActiveBlock = function() {
         this.activeBlock = 4;
@@ -344,8 +345,13 @@
             break;
         case Renderer.SPREAD_AREA:
             this.emitterPower = 0.1;
-            this.spatialSpread = 0.4;
+            this.spatialSpread = 0.1;
             this.angularSpread = [this.emitterAngle, Math.PI];
+            break;
+        case Renderer.SPREAD_AREA2:
+            this.emitterPower = 0.05;
+            this.spatialSpread = 0.1;
+            this.angularSpread = [this.emitterAngle, Math.PI/2];
             break;
         }
     }

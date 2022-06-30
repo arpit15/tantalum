@@ -119,13 +119,16 @@ Tantalum.prototype.setupUI = function() {
     var config = {
         "resolutions": [[820, 461], [1024, 576], [1280, 720], [1600, 900], [1920, 1080], [4096, 2160]],
         "scenes": [
+            {'shader': 'scene10', 'name': 'My scene3',            'posA': [0.0, 0.0],       'posB': [0.0, -1],         'spread': tcore.Renderer.SPREAD_AREA2},
+            {'shader': 'scene9', 'name': 'My scene2',            'posA': [0.0, 0.0],       'posB': [0.0, -1],         'spread': tcore.Renderer.SPREAD_AREA2},
             {'shader': 'scene1', 'name': 'Lenses',               'posA': [0.5,  0.5],      'posB': [0.5, 0.5],        'spread': tcore.Renderer.SPREAD_POINT},
             {'shader': 'scene6', 'name': 'Spheres',              'posA': map(-1.59, 0.65), 'posB': map(0.65, -0.75),  'spread': tcore.Renderer.SPREAD_BEAM},
             {'shader': 'scene7', 'name': 'Playground',           'posA': [0.3, 0.52],      'posB': [0.3, 0.52],       'spread': tcore.Renderer.SPREAD_POINT},
             {'shader': 'scene4', 'name': 'Prism',                'posA': [0.1,  0.65],     'posB': [0.4, 0.4],        'spread': tcore.Renderer.SPREAD_LASER},
             {'shader': 'scene5', 'name': 'Cardioid',             'posA': [0.2,  0.5],      'posB': [0.2, 0.5],        'spread': tcore.Renderer.SPREAD_POINT},
             {'shader': 'scene3', 'name': 'Cornell Box',          'posA': [0.5,  0.101],    'posB': [0.5, 0.2],        'spread': tcore.Renderer.SPREAD_AREA},
-            {'shader': 'scene2', 'name': 'Rough Mirror Spheres', 'posA': [0.25, 0.125],    'posB': [0.5, 0.66],       'spread': tcore.Renderer.SPREAD_LASER}
+            {'shader': 'scene2', 'name': 'Rough Mirror Spheres', 'posA': [0.25, 0.125],    'posB': [0.5, 0.66],       'spread': tcore.Renderer.SPREAD_LASER},
+            {'shader': 'scene8', 'name': 'My scene',          'posA': [0.5,  0.101],    'posB': [0.5, 0.2],        'spread': tcore.Renderer.SPREAD_AREA}
         ]
     };
     

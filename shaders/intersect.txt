@@ -1,3 +1,6 @@
+
+#include "bezierintersect"
+
 void bboxIntersect(Ray ray, vec2 center, vec2 radius, float matId, inout Intersection isect) {
     vec2 pos = ray.pos - center;
     float tx1 = (-radius.x - pos.x)*ray.invDir.x;
@@ -51,4 +54,22 @@ void prismIntersect(Ray ray, vec2 center, float radius, float matId, inout Inter
     lineIntersect(ray, center + vec2(   0.0,  1.0)*radius, center + vec2( 0.866, -0.5)*radius, matId, isect);
     lineIntersect(ray, center + vec2( 0.866, -0.5)*radius, center + vec2(-0.866, -0.5)*radius, matId, isect);
     lineIntersect(ray, center + vec2(-0.866, -0.5)*radius, center + vec2(   0.0,  1.0)*radius, matId, isect);
+}
+
+void bezierIntersect(Ray ray, vec2 ca, vec2 cb, vec2 cc, vec2 cd, float matId, inout Intersection isect){
+    vec2 la = ray.pos;
+    vec2 lb = ray.pos + isect.tMax*ray.dir;
+    // lb[1] = ray.pos[1] + isect.tMax*ray.dir[1];
+
+    Intersect intersects = BezierLineIntersect(ca, cb, cc, cd, la, lb);
+
+    if(intersects.count > 0){
+        // let [x,y] = intersects.p[0];
+        vec2 pt = intersects.p[0];
+        float tval = (pt[0] - ray.pos[0])/ray.dir[0];
+        isect.tMax = tval;
+        isect.n = normalize(intersects.der[0]);
+    }
+    
+    isect.mat = matId;
 }
