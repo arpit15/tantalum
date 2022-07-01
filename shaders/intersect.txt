@@ -65,10 +65,10 @@ void bezierIntersect(Ray ray, vec2 ca, vec2 cb, vec2 cc, vec2 cd, float matId, i
 
     if(intersects.count > 0){
         // let [x,y] = intersects.p[0];
-        vec2 pt = intersects.p[0];
+        vec2 pt = intersects.p1;
         float tval = (pt[0] - ray.pos[0])/ray.dir[0];
         isect.tMax = tval;
-        isect.n = normalize(intersects.der[0]);
+        isect.n = normalize(intersects.der1);
     }
     
     isect.mat = matId;
