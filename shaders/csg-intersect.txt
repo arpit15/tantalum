@@ -11,6 +11,16 @@ Segment segmentIntersection(Segment a, Segment b) {
         (a.tFar  < b.tFar)  ? a.nFar  : b.nFar
     );
 }
+
+Segment segmentUnion(Segment a, Segment b) {
+    return Segment(
+        min(a.tNear, b.tNear),
+        max(a.tFar,  b.tFar),
+        (a.tNear < b.tNear) ? a.nNear : b.nNear,
+        (a.tFar  > b.tFar)  ? a.nFar  : b.nFar
+    );
+}
+
 Segment segmentSubtraction(Segment a, Segment b, float tMin) {
     if (a.tNear >= a.tFar || b.tNear >= b.tFar || a.tFar <= b.tNear || a.tNear >= b.tFar)
         return a;
@@ -115,4 +125,44 @@ void planoConcaveLensIntersect(Ray ray, vec2 center, float h, float d, float r, 
         vertSpanIntersect(ray, center.x - 0.5*r, 0.5*abs(r) + d)),
         sphereSegmentIntersect(ray, center - vec2(r + d, 0.0), abs(r)), isect.tMin
     ), matId, isect);
+}
+
+void shellIntersect(Ray ray, vec2 origin, float h, float d, float matId, inout Intersection isect) {
+    Segment a = segmentUnion(
+        boxSegmentIntersect(ray, origin+vec2(-d/2.0, 0.0), vec2(d/2.0, h/2.0)),
+        sphereSegmentIntersect(ray, origin + vec2(-d, 0.0), abs(h/2.0))
+    );
+    // remove intersection with rightmost edge
+    vec2 nearP = ray.pos + a.tNear*ray.dir;
+    vec2 farP = ray.pos + a.tFar*ray.dir;
+    if (a.tNear > isect.tMin && nearP.x == origin.x) {
+        // invalidate
+        a.tNear = isect.tMin;
+        // a.tFar = isect.tMax;
+    }
+    // else if (a.tFar < isect.tMax && farP.x == origin.x) {
+    //     // invalidate
+    //     a.tFar = isect.tMax;
+    // }
+    
+    segmentCollapse(a, matId, isect);
+}
+
+void shellIntersect2(Ray ray, vec2 origin, float h, float d, float th, float matId, inout Intersection isect) {
+    Segment a = segmentUnion(
+        boxSegmentIntersect(ray, origin+vec2(-d/2.0, 0.0), vec2(d/2.0, h/2.0)),
+        sphereSegmentIntersect(ray, origin + vec2(-d, 0.0), abs(h/2.0))
+    );
+
+    Segment b = segmentUnion(
+        boxSegmentIntersect(ray, origin+vec2(-d/2.0, 0.0), vec2(d/2.0, (h-2.0*th)/2.0)),
+        sphereSegmentIntersect(ray, origin + vec2(-d, 0.0), abs((h-2.0*th)/2.0))
+    );
+
+    // testing
+    // segmentCollapse(a, matId, isect);
+    // segmentCollapse(b, matId, isect);
+    segmentCollapse( segmentSubtraction(a,b, isect.tMin) , matId, isect);
+    // segmentCollapse(sphereSegmentIntersect(ray, origin + vec2(-2.0*d, 0.0), abs(h/1.0)), matId, isect);
+    // segmentCollapse(boxSegmentIntersect(ray, origin+vec2(-d/2.0, 0.0), vec2(d, h)), matId, isect);
 }

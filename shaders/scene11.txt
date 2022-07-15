@@ -1,0 +1,30 @@
+#include "trace-frag"
+
+#include "bsdf"
+#include "intersect"
+
+void intersect(Ray ray, inout Intersection isect) {
+    // design params
+    vec2 design_p1 = vec2(-1.0, 0.0);
+    vec2 design_p2 = vec2(-0.5, 0.0);
+    vec2 design_p3 = vec2(+0.5, 0.0);
+    vec2 design_p4 = vec2(+1.0, 0.0);
+
+    float innermat = 0.0;
+    float outermat = 0.0;
+    // outer surface
+    bezierIntersect(ray, design_p1, design_p2, design_p3, design_p4, outermat, isect);
+    
+}
+
+vec2 sample(inout vec4 state, Intersection isect, float lambda, vec2 wiLocal, inout vec3 throughput) {
+    if (isect.mat == 1.0) {
+        float ior=1.5;
+        return sampleDielectric(state, wiLocal, ior);
+    } else if (isect.mat == 2.0) {
+        return sampleMirror(wiLocal);
+    } else {
+        throughput *= vec3(0.5);
+        return sampleDiffuse(state, wiLocal);
+    }
+}
